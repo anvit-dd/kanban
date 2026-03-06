@@ -6,9 +6,13 @@ import {
   DragOverlay,
   PointerSensor,
   closestCorners,
+  getFirstCollision,
+  pointerWithin,
+  rectIntersection,
   useDroppable,
   useSensor,
   useSensors,
+  type CollisionDetection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
@@ -80,6 +84,23 @@ const shortDateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
 });
+
+const columnAwareCollisionDetection: CollisionDetection = (args) => {
+  const pointerCollisions = pointerWithin(args);
+
+  if (pointerCollisions.length > 0) {
+    return pointerCollisions;
+  }
+
+  const rectCollisions = rectIntersection(args);
+  const firstCollision = getFirstCollision(rectCollisions, "id");
+
+  if (firstCollision) {
+    return rectCollisions;
+  }
+
+  return closestCorners(args);
+};
 
 function createTask(title: string, note: string, dueDate: string): Task {
   return {
@@ -163,7 +184,7 @@ type TaskCardBodyProps = {
   onMoveNext: (taskId: string) => void;
   canMoveBack: boolean;
   canMoveNext: boolean;
-  dragHandleProps?: Record<string, unknown>;
+  dragProps?: Record<string, unknown>;
   isDragging?: boolean;
   isOverlay?: boolean;
 };
@@ -176,32 +197,26 @@ function TaskCardBody({
   onMoveNext,
   canMoveBack,
   canMoveNext,
-  dragHandleProps,
+  dragProps,
   isDragging = false,
   isOverlay = false,
 }: TaskCardBodyProps) {
   return (
     <Card
+      {...(!isOverlay ? dragProps : undefined)}
       className={cn(
         "gap-0 rounded-[1.4rem] border-black/8 bg-white/90 py-0 shadow-none transition",
+        !isOverlay && "cursor-grab active:cursor-grabbing",
         isDragging && "shadow-[0_16px_36px_rgba(32,27,21,0.12)] ring-1 ring-black/6"
       )}
     >
       <CardContent className="px-4 pt-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <button
-              type="button"
-              className={cn(
-                "inline-flex touch-none items-center gap-2 rounded-full px-2 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-400 transition",
-                !isOverlay && "cursor-grab active:cursor-grabbing"
-              )}
-              aria-label={`Drag ${task.title}`}
-              {...dragHandleProps}
-            >
+            <div className="inline-flex touch-none items-center gap-2 rounded-full px-2 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-400 transition">
               <GripVertical className="size-4" />
               Move
-            </button>
+            </div>
 
             <h3 className="mt-3 text-base font-medium leading-6 text-stone-950">{task.title}</h3>
             {task.note ? <p className="mt-2 text-sm leading-6 text-stone-600">{task.note}</p> : null}
@@ -311,7 +326,7 @@ function SortableTaskCard({ task, onEdit, onDelete, onMoveBack, onMoveNext }: So
         onMoveNext={onMoveNext}
         canMoveBack={statusOrder.indexOf(task.status) > 0}
         canMoveNext={statusOrder.indexOf(task.status) < statusOrder.length - 1}
-        dragHandleProps={{ ...attributes, ...listeners }}
+        dragProps={{ ...attributes, ...listeners }}
         isDragging={isDragging}
       />
     </div>
@@ -354,7 +369,7 @@ function ColumnCard({
       <Card
         className={cn(
           "rounded-[2rem] bg-[rgba(251,248,241,0.88)] py-0 shadow-[0_10px_40px_rgba(32,27,21,0.05)] backdrop-blur transition",
-          isActiveDropzone ? "border-stone-900/30" : "border-black/8"
+          isActiveDropzone ? "border-stone-900/30 ring-1 ring-black/8" : "border-black/8"
         )}
       >
         <CardHeader className="grid-cols-[1fr_auto] gap-3 border-b border-black/8 px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
@@ -662,21 +677,10 @@ export function BoardClient({
       return;
     }
 
-    const activeId = String(event.active.id);
     const overId = String(event.over.id);
-    const activeLocation = getTaskLocation(board, activeId);
-
-    if (!activeLocation) {
-      return;
-    }
 
     if (isColumnId(overId)) {
       setActiveDropColumn(overId);
-
-      if (activeLocation.columnId !== overId) {
-        applyBoardUpdate((currentBoard) => moveTask(currentBoard, activeId, overId));
-      }
-
       return;
     }
 
@@ -687,12 +691,6 @@ export function BoardClient({
     }
 
     setActiveDropColumn(overLocation.columnId);
-
-    if (activeLocation.columnId !== overLocation.columnId) {
-      applyBoardUpdate((currentBoard) =>
-        moveTask(currentBoard, activeId, overLocation.columnId, overLocation.index)
-      );
-    }
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -874,7 +872,7 @@ export function BoardClient({
 
           <DndContext
             sensors={sensors}
-            collisionDetection={closestCorners}
+            collisionDetection={columnAwareCollisionDetection}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
