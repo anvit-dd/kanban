@@ -28,6 +28,7 @@ import { CalendarDays, FolderPlus, GripVertical, PencilLine, Plus, Trash2 } from
 
 import { createProjectAction, deleteProjectAction, getProjectDataAction, renameProjectAction, saveBoardAction } from "@/app/actions";
 import { LogoutButton } from "@/components/logout-button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -205,7 +206,7 @@ function TaskCardBody({
     <Card
       {...(!isOverlay ? dragProps : undefined)}
       className={cn(
-        "gap-0 rounded-[1.4rem] border-black/8 bg-white/90 py-0 shadow-none transition",
+        "gap-0 rounded-[1.4rem] border-black/8 bg-white/90 py-0 shadow-none transition dark:border-white/10 dark:bg-[rgba(36,32,28,0.88)]",
         !isOverlay && "cursor-grab active:cursor-grabbing",
         isDragging && "shadow-[0_16px_36px_rgba(32,27,21,0.12)] ring-1 ring-black/6"
       )}
@@ -213,13 +214,13 @@ function TaskCardBody({
       <CardContent className="px-4 pt-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <div className="inline-flex touch-none items-center gap-2 rounded-full px-2 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-400 transition">
+            <div className="inline-flex touch-none items-center gap-2 rounded-full px-2 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-400 transition dark:text-stone-500">
               <GripVertical className="size-4" />
               Move
             </div>
 
-            <h3 className="mt-3 text-base font-medium leading-6 text-stone-950">{task.title}</h3>
-            {task.note ? <p className="mt-2 text-sm leading-6 text-stone-600">{task.note}</p> : null}
+            <h3 className="mt-3 text-base font-medium leading-6 text-stone-950 dark:text-stone-50">{task.title}</h3>
+            {task.note ? <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-300">{task.note}</p> : null}
           </div>
 
           {!isOverlay ? (
@@ -229,7 +230,7 @@ function TaskCardBody({
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => onEdit(task)}
-                className="rounded-full text-stone-400 hover:bg-transparent hover:text-stone-950"
+                className="rounded-full text-stone-400 hover:bg-transparent hover:text-stone-950 dark:text-stone-500 dark:hover:text-stone-50"
                 aria-label={`Edit ${task.title}`}
               >
                 <PencilLine className="size-4" />
@@ -239,7 +240,7 @@ function TaskCardBody({
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => onDelete(task.id)}
-                className="rounded-full text-stone-400 hover:bg-transparent hover:text-stone-950"
+                className="rounded-full text-stone-400 hover:bg-transparent hover:text-stone-950 dark:text-stone-500 dark:hover:text-stone-50"
                 aria-label={`Delete ${task.title}`}
               >
                 <Trash2 className="size-4" />
@@ -249,10 +250,10 @@ function TaskCardBody({
         </div>
 
         {task.dueDate ? (
-          <div className="mt-4 flex items-center gap-2 text-sm text-stone-500">
+          <div className="mt-4 flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400">
             <Badge
               variant="outline"
-              className="rounded-full border-black/10 bg-stone-50 px-3 py-1 text-[0.68rem] uppercase tracking-[0.16em] text-stone-600"
+              className="rounded-full border-black/10 bg-stone-50 px-3 py-1 text-[0.68rem] uppercase tracking-[0.16em] text-stone-600 dark:border-white/12 dark:bg-white/6 dark:text-stone-300"
             >
               <CalendarDays className="size-3.5" />
               Due {formatShortDate(task.dueDate)}
@@ -261,7 +262,7 @@ function TaskCardBody({
         ) : null}
       </CardContent>
 
-      <CardFooter className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-black/8 px-4 py-3 text-sm text-stone-500">
+      <CardFooter className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-black/8 px-4 py-3 text-sm text-stone-500 dark:border-white/10 dark:text-stone-400">
         <span>Created {shortDateFormatter.format(new Date(task.createdAt))}</span>
         {!isOverlay ? (
           <div className="flex items-center gap-2">
@@ -271,7 +272,7 @@ function TaskCardBody({
               size="sm"
               onClick={() => onMoveBack(task.id)}
               disabled={!canMoveBack}
-              className="rounded-full border-black/10 bg-transparent px-3 text-[0.68rem] uppercase tracking-[0.16em] text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+              className="rounded-full border-black/10 bg-transparent px-3 text-[0.68rem] uppercase tracking-[0.16em] text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
             >
               Back
             </Button>
@@ -281,7 +282,7 @@ function TaskCardBody({
               size="sm"
               onClick={() => onMoveNext(task.id)}
               disabled={!canMoveNext}
-              className="rounded-full border-black/10 bg-transparent px-3 text-[0.68rem] uppercase tracking-[0.16em] text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+              className="rounded-full border-black/10 bg-transparent px-3 text-[0.68rem] uppercase tracking-[0.16em] text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
             >
               Next
             </Button>
@@ -368,21 +369,21 @@ function ColumnCard({
     <div ref={setNodeRef}>
       <Card
         className={cn(
-          "rounded-[2rem] bg-[rgba(251,248,241,0.88)] py-0 shadow-[0_10px_40px_rgba(32,27,21,0.05)] backdrop-blur transition",
-          isActiveDropzone ? "border-stone-900/30 ring-1 ring-black/8" : "border-black/8"
+          "rounded-[2rem] bg-[rgba(251,248,241,0.88)] py-0 shadow-[0_10px_40px_rgba(32,27,21,0.05)] backdrop-blur transition dark:bg-[rgba(36,32,28,0.82)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.22)]",
+          isActiveDropzone ? "border-stone-900/30 ring-1 ring-black/8 dark:border-white/20 dark:ring-white/10" : "border-black/8 dark:border-white/10"
         )}
       >
-        <CardHeader className="grid-cols-[1fr_auto] gap-3 border-b border-black/8 px-4 pb-4 pt-4 sm:px-5 sm:pt-5">
+        <CardHeader className="grid-cols-[1fr_auto] gap-3 border-b border-black/8 px-4 pb-4 pt-4 sm:px-5 sm:pt-5 dark:border-white/10">
           <div>
-            <CardTitle className="flex items-center gap-2 text-lg font-medium text-stone-950">
-              <span className="h-2.5 w-2.5 rounded-full bg-stone-400" />
+            <CardTitle className="flex items-center gap-2 text-lg font-medium text-stone-950 dark:text-stone-50">
+              <span className="h-2.5 w-2.5 rounded-full bg-stone-400 dark:bg-stone-500" />
               {label}
             </CardTitle>
-            <CardDescription className="mt-1 text-sm text-stone-500">{hint}</CardDescription>
+            <CardDescription className="mt-1 text-sm text-stone-500 dark:text-stone-400">{hint}</CardDescription>
           </div>
           <Badge
             variant="outline"
-            className="rounded-full border-black/8 bg-white/70 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500"
+            className="rounded-full border-black/8 bg-white/70 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500 dark:border-white/12 dark:bg-white/8 dark:text-stone-300"
           >
             {tasks.length}
           </Badge>
@@ -402,8 +403,8 @@ function ColumnCard({
                 />
               ))
             ) : (
-              <Card className="min-h-56 justify-between gap-0 rounded-[1.4rem] border-dashed border-black/10 bg-white/40 py-0 shadow-none">
-                <CardContent className="flex h-full min-h-56 items-end p-4 text-sm text-stone-400">
+              <Card className="min-h-56 justify-between gap-0 rounded-[1.4rem] border-dashed border-black/10 bg-white/40 py-0 shadow-none dark:border-white/10 dark:bg-white/4">
+                <CardContent className="flex h-full min-h-56 items-end p-4 text-sm text-stone-400 dark:text-stone-500">
                   <p>{isActiveDropzone ? "Release to drop the task here." : "No tasks yet."}</p>
                 </CardContent>
               </Card>
@@ -740,37 +741,37 @@ export function BoardClient({
     <>
       <main className="min-h-screen px-4 py-4 sm:px-6 sm:py-6 lg:px-10 lg:py-8">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 lg:gap-5">
-          <Card className="rounded-[1.5rem] border-black/8 bg-[rgba(252,249,243,0.82)] py-0 shadow-[0_12px_36px_rgba(32,27,21,0.07)] backdrop-blur">
+          <Card className="rounded-[1.5rem] border-black/8 bg-[rgba(252,249,243,0.82)] py-0 shadow-[0_12px_36px_rgba(32,27,21,0.07)] backdrop-blur dark:border-white/10 dark:bg-[rgba(36,32,28,0.82)] dark:shadow-[0_16px_40px_rgba(0,0,0,0.24)]">
             <CardContent className="grid gap-3 p-3 sm:p-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge
                     variant="outline"
-                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500"
+                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500 dark:border-white/12 dark:bg-white/8 dark:text-stone-300"
                   >
                     {userEmail}
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500"
+                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500 dark:border-white/12 dark:bg-white/8 dark:text-stone-300"
                   >
                     {totalTasks} tasks
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500"
+                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500 dark:border-white/12 dark:bg-white/8 dark:text-stone-300"
                   >
                     {workingCount} working
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500"
+                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500 dark:border-white/12 dark:bg-white/8 dark:text-stone-300"
                   >
                     {progress}% done
                   </Badge>
                   <Badge
                     variant="outline"
-                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500"
+                    className="rounded-full border-black/8 bg-white/65 px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-stone-500 dark:border-white/12 dark:bg-white/8 dark:text-stone-300"
                   >
                     {saveState === "saving"
                       ? "Saving..."
@@ -783,13 +784,14 @@ export function BoardClient({
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  <h1 className="font-[family:var(--font-display)] text-2xl tracking-[-0.04em] text-stone-950 sm:text-3xl">
+                  <h1 className="font-[family:var(--font-display)] text-2xl tracking-[-0.04em] text-stone-950 dark:text-stone-50 sm:text-3xl">
                     {activeProjectName}
                   </h1>
+                  <ThemeToggle />
                   <Button
                     type="button"
                     onClick={() => setIsCreateTaskOpen(true)}
-                    className="h-9 rounded-full bg-stone-950 px-4 text-sm font-medium text-stone-50 shadow-none hover:bg-stone-800"
+                    className="h-9 rounded-full bg-[var(--foreground)] px-4 text-sm font-medium text-[var(--primary-foreground)] shadow-none hover:opacity-92"
                   >
                     <Plus className="size-4" />
                     Add task
@@ -798,7 +800,7 @@ export function BoardClient({
                     type="button"
                     onClick={handleClearCompleted}
                     variant="outline"
-                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
                   >
                     Clear completed
                   </Button>
@@ -810,7 +812,7 @@ export function BoardClient({
                       setIsRenameProjectOpen(true);
                     }}
                     disabled={projectLoading !== null}
-                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
                   >
                     Rename project
                   </Button>
@@ -819,13 +821,13 @@ export function BoardClient({
                     variant="outline"
                     onClick={() => setIsDeleteProjectOpen(true)}
                     disabled={projects.length <= 1 || projectLoading !== null}
-                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
                   >
                     Delete project
                   </Button>
                 </div>
 
-                <div className="grid gap-2 rounded-[1.2rem] border border-black/8 bg-white/72 p-2.5">
+                <div className="grid gap-2 rounded-[1.2rem] border border-black/8 bg-white/72 p-2.5 dark:border-white/10 dark:bg-white/6">
                   <div className="flex flex-wrap gap-2">
                     {projects.map((project) => (
                       <button
@@ -836,8 +838,8 @@ export function BoardClient({
                         className={cn(
                           "rounded-full border px-3 py-1.5 text-sm transition",
                           project.id === activeProjectId
-                            ? "border-stone-950 bg-stone-950 text-stone-50"
-                            : "border-black/10 bg-white/60 text-stone-600 hover:border-black/20 hover:text-stone-950"
+                            ? "border-[var(--foreground)] bg-[var(--foreground)] text-[var(--primary-foreground)]"
+                            : "border-black/10 bg-white/60 text-stone-600 hover:border-black/20 hover:text-stone-950 dark:border-white/12 dark:bg-white/6 dark:text-stone-300 dark:hover:border-white/20 dark:hover:text-stone-50"
                         )}
                       >
                         {projectLoading === project.id ? "Loading..." : project.name}
@@ -850,13 +852,13 @@ export function BoardClient({
                       value={newProjectName}
                       onChange={(event) => setNewProjectName(event.target.value)}
                       placeholder="New project"
-                      className="h-10 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                      className="h-10 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:placeholder:text-stone-500 dark:focus-visible:border-white/20"
                     />
                     <Button
                       type="submit"
                       disabled={projectLoading !== null || !newProjectName.trim()}
                       variant="outline"
-                      className="h-10 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                      className="h-10 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
                     >
                       <FolderPlus className="size-4" />
                       Add project
@@ -920,55 +922,55 @@ export function BoardClient({
       </main>
 
       <Dialog open={editingTaskId !== null} onOpenChange={(open) => (!open ? closeEditor() : undefined)}>
-        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] sm:max-w-xl">
+        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] dark:border-white/10 dark:bg-[rgba(36,32,28,0.96)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:max-w-xl">
           <form onSubmit={handleEditTask} className="grid gap-0">
-            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left">
-              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950">
+            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left dark:border-white/10">
+              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950 dark:text-stone-50">
                 Edit task
               </DialogTitle>
-              <DialogDescription className="text-sm leading-6 text-stone-500">
+              <DialogDescription className="text-sm leading-6 text-stone-500 dark:text-stone-400">
                 Adjust the title, note, or due date.
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 px-6 py-5">
               <label className="grid gap-2">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Task title</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Task title</span>
                 <Input
                   value={editTitle}
                   onChange={(event) => setEditTitle(event.target.value)}
-                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:focus-visible:border-white/20"
                   maxLength={80}
                 />
               </label>
 
               <label className="grid gap-2">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Note</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Note</span>
                 <Textarea
                   value={editNote}
                   onChange={(event) => setEditNote(event.target.value)}
-                  className="min-h-32 rounded-[1rem] border-black/10 bg-stone-50 px-4 py-3 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="min-h-32 rounded-[1rem] border-black/10 bg-stone-50 px-4 py-3 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:focus-visible:border-white/20"
                   maxLength={220}
                 />
               </label>
 
               <label className="grid gap-2 sm:max-w-[12rem]">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Due date</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Due date</span>
                 <Input
                   type="date"
                   value={editDueDate}
                   onChange={(event) => setEditDueDate(event.target.value)}
-                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:focus-visible:border-white/20"
                 />
               </label>
             </div>
 
-            <DialogFooter className="border-t border-black/8 px-6 py-4 sm:justify-between">
+            <DialogFooter className="border-t border-black/8 px-6 py-4 dark:border-white/10 sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
                 onClick={closeEditor}
-                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
               >
                 Cancel
               </Button>
@@ -985,57 +987,57 @@ export function BoardClient({
       </Dialog>
 
       <Dialog open={isCreateTaskOpen} onOpenChange={setIsCreateTaskOpen}>
-        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] sm:max-w-xl">
+        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] dark:border-white/10 dark:bg-[rgba(36,32,28,0.96)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:max-w-xl">
           <form onSubmit={handleCreateTask} className="grid gap-0">
-            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left">
-              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950">
+            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left dark:border-white/10">
+              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950 dark:text-stone-50">
                 Add task
               </DialogTitle>
-              <DialogDescription className="text-sm leading-6 text-stone-500">
+              <DialogDescription className="text-sm leading-6 text-stone-500 dark:text-stone-400">
                 Add a task to {activeProjectName}.
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 px-6 py-5">
               <label className="grid gap-2">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Task title</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Task title</span>
                 <Input
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
                   placeholder="Prepare sprint notes"
-                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:placeholder:text-stone-500 dark:focus-visible:border-white/20"
                   maxLength={80}
                 />
               </label>
 
               <label className="grid gap-2">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Note</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Note</span>
                 <Textarea
                   value={note}
                   onChange={(event) => setNote(event.target.value)}
                   placeholder="Optional note"
-                  className="min-h-28 rounded-[1rem] border-black/10 bg-stone-50 px-4 py-3 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="min-h-28 rounded-[1rem] border-black/10 bg-stone-50 px-4 py-3 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:placeholder:text-stone-500 dark:focus-visible:border-white/20"
                   maxLength={220}
                 />
               </label>
 
               <label className="grid gap-2 sm:max-w-[12rem]">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Due date</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Due date</span>
                 <Input
                   type="date"
                   value={dueDate}
                   onChange={(event) => setDueDate(event.target.value)}
-                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:focus-visible:border-white/20"
                 />
               </label>
             </div>
 
-            <DialogFooter className="border-t border-black/8 px-6 py-4 sm:justify-between">
+            <DialogFooter className="border-t border-black/8 px-6 py-4 dark:border-white/10 sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsCreateTaskOpen(false)}
-                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
               >
                 Cancel
               </Button>
@@ -1052,23 +1054,23 @@ export function BoardClient({
       </Dialog>
 
       <Dialog open={isDeleteProjectOpen} onOpenChange={setIsDeleteProjectOpen}>
-        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] sm:max-w-lg">
+        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] dark:border-white/10 dark:bg-[rgba(36,32,28,0.96)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:max-w-lg">
           <div className="grid gap-0">
-            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left">
-              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950">
+            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left dark:border-white/10">
+              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950 dark:text-stone-50">
                 Delete project
               </DialogTitle>
-              <DialogDescription className="text-sm leading-6 text-stone-500">
+              <DialogDescription className="text-sm leading-6 text-stone-500 dark:text-stone-400">
                 Delete {activeProjectName} and all of its tasks.
               </DialogDescription>
             </DialogHeader>
 
-            <DialogFooter className="border-t border-black/8 px-6 py-4 sm:justify-between">
+            <DialogFooter className="border-t border-black/8 px-6 py-4 dark:border-white/10 sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsDeleteProjectOpen(false)}
-                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
               >
                 Cancel
               </Button>
@@ -1085,35 +1087,35 @@ export function BoardClient({
       </Dialog>
 
       <Dialog open={isRenameProjectOpen} onOpenChange={setIsRenameProjectOpen}>
-        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] sm:max-w-lg">
+        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] dark:border-white/10 dark:bg-[rgba(36,32,28,0.96)] dark:shadow-[0_24px_80px_rgba(0,0,0,0.36)] sm:max-w-lg">
           <form onSubmit={handleRenameProject} className="grid gap-0">
-            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left">
-              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950">
+            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left dark:border-white/10">
+              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950 dark:text-stone-50">
                 Rename project
               </DialogTitle>
-              <DialogDescription className="text-sm leading-6 text-stone-500">
+              <DialogDescription className="text-sm leading-6 text-stone-500 dark:text-stone-400">
                 Update the project name.
               </DialogDescription>
             </DialogHeader>
 
             <div className="px-6 py-5">
               <label className="grid gap-2">
-                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Project name</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500 dark:text-stone-400">Project name</span>
                 <Input
                   value={renameProjectName}
                   onChange={(event) => setRenameProjectName(event.target.value)}
-                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0 dark:border-white/12 dark:bg-white/6 dark:text-stone-50 dark:focus-visible:border-white/20"
                   maxLength={60}
                 />
               </label>
             </div>
 
-            <DialogFooter className="border-t border-black/8 px-6 py-4 sm:justify-between">
+            <DialogFooter className="border-t border-black/8 px-6 py-4 dark:border-white/10 sm:justify-between">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => setIsRenameProjectOpen(false)}
-                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
               >
                 Cancel
               </Button>

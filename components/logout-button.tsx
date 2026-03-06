@@ -14,7 +14,7 @@ export function LogoutButton() {
       variant="outline"
       onClick={() => startTransition(async () => signOutAction())}
       disabled={isPending}
-      className="h-11 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+      className="h-11 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950 dark:border-white/12 dark:text-stone-300 dark:hover:border-white/20 dark:hover:bg-white/10 dark:hover:text-stone-50"
     >
       {isPending ? "Signing out..." : "Log out"}
     </Button>

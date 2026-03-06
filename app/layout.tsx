@@ -25,7 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(() => { try { const theme = localStorage.getItem('kanban-theme'); if (theme === 'dark') document.documentElement.classList.add('dark'); } catch {} })();`,
+          }}
+        />
+      </head>
       <body className={`${display.variable} ${body.variable} antialiased`}>
         {children}
       </body>
