@@ -22,7 +22,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { CalendarDays, FolderPlus, GripVertical, PencilLine, Plus, Trash2 } from "lucide-react";
 
-import { createProjectAction, deleteProjectAction, getProjectDataAction, saveBoardAction } from "@/app/actions";
+import { createProjectAction, deleteProjectAction, getProjectDataAction, renameProjectAction, saveBoardAction } from "@/app/actions";
 import { LogoutButton } from "@/components/logout-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -413,8 +413,10 @@ export function BoardClient({
   const [note, setNote] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [newProjectName, setNewProjectName] = useState("");
+  const [renameProjectName, setRenameProjectName] = useState("");
   const [projectError, setProjectError] = useState<string | null>(null);
   const [projectLoading, setProjectLoading] = useState<number | null>(null);
+  const [isRenameProjectOpen, setIsRenameProjectOpen] = useState(false);
   const [isDeleteProjectOpen, setIsDeleteProjectOpen] = useState(false);
   const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
@@ -539,6 +541,31 @@ export function BoardClient({
       setIsDeleteProjectOpen(false);
     } catch (error) {
       setProjectError(error instanceof Error ? error.message : "Could not delete project.");
+    } finally {
+      setProjectLoading(null);
+    }
+  }
+
+  async function handleRenameProject(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!renameProjectName.trim()) {
+      setProjectError("Project name is required.");
+      return;
+    }
+
+    setProjectError(null);
+    setProjectLoading(activeProjectId);
+
+    try {
+      const result = await renameProjectAction(activeProjectId, renameProjectName);
+      setProjects(result.projects);
+      setActiveProjectId(result.activeProjectId);
+      setBoard(result.board);
+      setSaveState("idle");
+      setIsRenameProjectOpen(false);
+    } catch (error) {
+      setProjectError(error instanceof Error ? error.message : "Could not rename project.");
     } finally {
       setProjectLoading(null);
     }
@@ -776,6 +803,18 @@ export function BoardClient({
                     className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
                   >
                     Clear completed
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      setRenameProjectName(activeProjectName);
+                      setIsRenameProjectOpen(true);
+                    }}
+                    disabled={projectLoading !== null}
+                    className="h-9 rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+                  >
+                    Rename project
                   </Button>
                   <Button
                     type="button"
@@ -1044,6 +1083,51 @@ export function BoardClient({
               </Button>
             </DialogFooter>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isRenameProjectOpen} onOpenChange={setIsRenameProjectOpen}>
+        <DialogContent className="rounded-[1.8rem] border-black/10 bg-[rgba(252,249,243,0.96)] p-0 shadow-[0_24px_80px_rgba(32,27,21,0.18)] sm:max-w-lg">
+          <form onSubmit={handleRenameProject} className="grid gap-0">
+            <DialogHeader className="border-b border-black/8 px-6 py-5 text-left">
+              <DialogTitle className="font-[family:var(--font-display)] text-3xl tracking-[-0.03em] text-stone-950">
+                Rename project
+              </DialogTitle>
+              <DialogDescription className="text-sm leading-6 text-stone-500">
+                Update the project name.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="px-6 py-5">
+              <label className="grid gap-2">
+                <span className="text-xs uppercase tracking-[0.2em] text-stone-500">Project name</span>
+                <Input
+                  value={renameProjectName}
+                  onChange={(event) => setRenameProjectName(event.target.value)}
+                  className="h-11 rounded-[1rem] border-black/10 bg-stone-50 px-4 text-base text-stone-950 shadow-none focus-visible:border-black/20 focus-visible:ring-0"
+                  maxLength={60}
+                />
+              </label>
+            </div>
+
+            <DialogFooter className="border-t border-black/8 px-6 py-4 sm:justify-between">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsRenameProjectOpen(false)}
+                className="rounded-full border-black/10 bg-transparent px-4 text-stone-600 shadow-none hover:border-black/20 hover:bg-white/60 hover:text-stone-950"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={!renameProjectName.trim() || projectLoading !== null}
+                className="rounded-full bg-stone-950 px-5 text-sm font-medium text-stone-50 shadow-none hover:bg-stone-800"
+              >
+                Save
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </>

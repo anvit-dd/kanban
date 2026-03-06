@@ -15,6 +15,7 @@ import {
   getProjectForUser,
   getUserByEmail,
   listProjectsForUser,
+  renameProjectForUser,
   replaceBoardForProject,
 } from "@/lib/store";
 
@@ -128,6 +129,29 @@ export async function deleteProjectAction(projectId: number) {
   return {
     activeProjectId: nextProject.id,
     board: getBoardForProject(user.id, nextProject.id),
+    projects: projects.map((item) => ({ id: item.id, name: item.name })),
+  };
+}
+
+export async function renameProjectAction(projectId: number, name: string) {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    throw new Error("Unauthorized.");
+  }
+
+  const renamedProject = renameProjectForUser(user.id, projectId, name);
+
+  if (!renamedProject) {
+    throw new Error("Project not found.");
+  }
+
+  const projects = listProjectsForUser(user.id);
+
+  revalidatePath("/");
+  return {
+    activeProjectId: renamedProject.id,
+    board: getBoardForProject(user.id, renamedProject.id),
     projects: projects.map((item) => ({ id: item.id, name: item.name })),
   };
 }

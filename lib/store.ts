@@ -141,6 +141,32 @@ export function createProjectForUser(userId: number, name: string, useStarterBoa
   return project;
 }
 
+export function renameProjectForUser(userId: number, projectId: number, name: string) {
+  const project = getProjectForUser(userId, projectId);
+
+  if (!project) {
+    throw new Error("Project not found.");
+  }
+
+  const normalizedName = normalizeProjectName(name);
+
+  if (!normalizedName) {
+    throw new Error("Project name is required.");
+  }
+
+  const existing = db
+    .prepare("SELECT id FROM projects WHERE user_id = ? AND lower(name) = lower(?) AND id != ?")
+    .get(userId, normalizedName, projectId) as { id: number } | undefined;
+
+  if (existing) {
+    throw new Error("Project already exists.");
+  }
+
+  db.prepare("UPDATE projects SET name = ? WHERE user_id = ? AND id = ?").run(normalizedName, userId, projectId);
+
+  return getProjectForUser(userId, projectId);
+}
+
 export function deleteProjectForUser(userId: number, projectId: number) {
   const project = getProjectForUser(userId, projectId);
 
